@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, FlatList } from 'react-native';
+import { SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
+import { ListItem } from 'react-native-elements';
 
 import api from '../services/api';
 
 export default function City({ route }) {
 
-    const { id } = route.params;
+    const { uf } = route.params;
 
+    const [loading, setLoading] = useState(true);
     const [cities, setCities] = useState([]);
 
     useEffect(() => { getCities() }, []);
@@ -15,9 +17,22 @@ export default function City({ route }) {
 
         try {
 
-            const { data } = await api.get(`/estados/${id}/municipios`);
+            const { data } = await api.get(`/estados/${uf.id}/municipios`);
 
-            setCities(data);
+            var list = [];
+
+            data.map((item, key) => {
+
+                list[key] = {
+                    id: item.id,
+                    nome: item.nome,
+                    subtitle: `Micro região ${item.microrregiao.nome}`
+                }
+
+            });
+
+            setCities(list);
+            setLoading(false);
 
         } catch (error) {
             console.log(error);
@@ -25,21 +40,22 @@ export default function City({ route }) {
 
     }
 
+    if (loading) {
+        return <ActivityIndicator style={{ alignSelf: "center", flex: 1 }} />
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <FlatList
-                data={cities}
-                keyExtractor={item => String(item.id)}
-                renderItem={({ item }) => (
-                    <View
-                        style={{
-                            alignSelf: "stretch"
-                        }}
-                    >
-                        <Text>{item.nome}</Text>
-                    </View>
-                )}
-            />
+            <ScrollView>
+                {cities.map(item => (
+                    <ListItem
+                        key={item.id}
+                        title={item.nome}
+                        subtitle={item.subtitle}
+                        bottomDivider
+                    />
+                ))}
+            </ScrollView>
         </SafeAreaView>
     )
 }

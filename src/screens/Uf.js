@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { ListItem, SearchBar } from 'react-native-elements';
 
 import api from '../services/api';
 
 export default function Uf({ navigation }) {
 
     const [ufs, setUfs] = useState([]);
+    const [search, setSearch] = useState([]);
+    const [filter, setFilter] = useState("");
 
     useEffect(() => { getUfs() }, []);
 
@@ -29,6 +31,7 @@ export default function Uf({ navigation }) {
             });
 
             setUfs(list);
+            setSearch(list);
 
         } catch (error) {
             console.log(error);
@@ -36,15 +39,36 @@ export default function Uf({ navigation }) {
 
     }
 
-    const handleCities = id => navigation.navigate("City", { id });
+    const handleCities = uf => navigation.navigate("City", { uf });
+
+    const handleFilter = textFilter => {
+
+        setFilter(textFilter);
+
+        const newList = search.filter(({ nome }) => nome.toLowerCase().indexOf(textFilter.toLowerCase()) > -1);
+
+        setSearch(newList);
+
+    }
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <SearchBar
+                placeholder="Pesquisar..."
+                lightTheme
+                placeholderTextColor="#000"
+                inputStyle={{
+                    color: "#000"
+                }}
+                onChangeText={handleFilter}
+                onClear={() => setSearch(ufs)}
+                value={filter}
+            />
             <ScrollView>
-                {ufs.map(item => (
+                {search.map(item => (
                     <TouchableOpacity
                         key={item.id}
-                        onPress={() => handleCities(item.id)}
+                        onPress={() => handleCities(item)}
                         style={{ alignSelf: "stretch" }}
                     >
                         <ListItem

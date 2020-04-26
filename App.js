@@ -12,8 +12,18 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Uf" component={Uf} />
-        <Stack.Screen name="City" component={City} />
+        <Stack.Screen
+          options={{
+            headerTitle: "Estados"
+          }}
+          name="Uf"
+          component={Uf} />
+        <Stack.Screen
+          options={({ route }) => ({
+            title: route.params.uf.nome
+          })}
+          name="City"
+          component={City} />
       </Stack.Navigator>
     </NavigationContainer>
   );
