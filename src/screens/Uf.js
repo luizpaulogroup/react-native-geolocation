@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, Image, Text, FlatList, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Text, FlatList, TouchableOpacity } from 'react-native';
 
 import api from '../services/api';
 
