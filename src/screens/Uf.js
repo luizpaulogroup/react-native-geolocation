@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, Text, FlatList, TouchableOpacity } from 'react-native';
+import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { ListItem } from 'react-native-elements';
 
 import api from '../services/api';
 
@@ -15,7 +16,19 @@ export default function Uf({ navigation }) {
 
             const { data } = await api.get("/estados");
 
-            setUfs(data);
+            var list = [];
+
+            data.map((item, key) => {
+
+                list[key] = {
+                    id: item.id,
+                    nome: item.nome,
+                    subtitle: `Região ${item.regiao.nome}`
+                }
+
+            });
+
+            setUfs(list);
 
         } catch (error) {
             console.log(error);
@@ -27,20 +40,22 @@ export default function Uf({ navigation }) {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <FlatList
-                data={ufs}
-                keyExtractor={item => String(item.id)}
-                renderItem={({ item }) => (
+            <ScrollView>
+                {ufs.map(item => (
                     <TouchableOpacity
+                        key={item.id}
                         onPress={() => handleCities(item.id)}
-                        style={{
-                            alignSelf: "stretch"
-                        }}
+                        style={{ alignSelf: "stretch" }}
                     >
-                        <Text>{item.nome}</Text>
+                        <ListItem
+                            title={item.nome}
+                            subtitle={item.subtitle}
+                            bottomDivider
+                            chevron
+                        />
                     </TouchableOpacity>
-                )}
-            />
+                ))}
+            </ScrollView>
         </SafeAreaView>
     )
 }
