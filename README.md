@@ -1,6 +1,6 @@
 # geolocation
 
-## List ufs from Brazil by api IBGE
+## List ufs/cities from Brazil by IBGE locations API
 
 - List ufs
     - Search ufs
