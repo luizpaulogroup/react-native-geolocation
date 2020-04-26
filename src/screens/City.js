@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, Image, Text, FlatList, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, FlatList } from 'react-native';
 
 import api from '../services/api';
 
-export default function Uf({ navigation }) {
+export default function City({ route }) {
 
-    const [ufs, setUfs] = useState([]);
+    const { id } = route.params;
 
-    useEffect(() => { getUfs() }, []);
+    const [cities, setCities] = useState([]);
 
-    const getUfs = async () => {
+    useEffect(() => { getCities() }, []);
+
+    const getCities = async () => {
 
         try {
 
-            const { data } = await api.get("/estados");
+            const { data } = await api.get(`/estados/${id}/municipios`);
 
-            setUfs(data);
+            setCities(data);
 
         } catch (error) {
             console.log(error);
@@ -23,25 +25,21 @@ export default function Uf({ navigation }) {
 
     }
 
-    const handleCities = id => navigation.navigate("City", { id });
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <FlatList
-                data={ufs}
+                data={cities}
                 keyExtractor={item => String(item.id)}
                 renderItem={({ item }) => (
-                    <TouchableOpacity
-                        onPress={() => handleCities(item.id)}
+                    <View
                         style={{
                             alignSelf: "stretch"
                         }}
                     >
                         <Text>{item.nome}</Text>
-                    </TouchableOpacity>
+                    </View>
                 )}
             />
         </SafeAreaView>
     )
 }
-
